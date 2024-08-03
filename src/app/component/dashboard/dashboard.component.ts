@@ -11,11 +11,13 @@ import { EmployeeService } from '../../service/employee.service';
 export class DashboardComponent {
   empDetail!: FormGroup;
   empObj: Employee = new Employee();
+  empList: Employee[] = [];
   constructor(
     private formBuilder: FormBuilder,
     private empService: EmployeeService
   ) {}
   ngOnInit(): void {
+    this.getAllEmployee();
     this.empDetail = this.formBuilder.group({
       id: [''],
       name: [''],
