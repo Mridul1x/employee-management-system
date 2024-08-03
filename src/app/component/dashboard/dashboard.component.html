@@ -1,0 +1,63 @@
+<div class="navbar bg-base-200 container mx-auto rounded-2xl">
+  <div class="flex-1">
+    <a class="btn btn-ghost text-xl">Employee Management</a>
+  </div>
+  <div class="navbar-center flex-auto">
+    <!-- modal button -->
+    <button class="btn" onclick="employee.showModal()">Add Employee</button>
+  </div>
+  <!-- employee modal -->
+  <dialog id="employee" class="modal">
+    <div class="modal-box">
+      <form method="dialog" [formGroup]="empDetail">
+        <button
+          type="submit"
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+        >
+          ✕
+        </button>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input
+            type="name"
+            placeholder="Type Your Name"
+            class="input input-bordered"
+            formControlName="name"
+            id="name"
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input
+            type="email"
+            placeholder="Type Your Email"
+            class="input input-bordered"
+            formControlName="email"
+            id="email"
+          />
+        </div>
+        <div class="form-control">
+          <label class="label">
+            <span class="label-text">Salary</span>
+          </label>
+          <input
+            type="salary"
+            placeholder="Type Your Salary"
+            class="input input-bordered"
+            formControlName="salary"
+            id="salary"
+          />
+        </div>
+        <div class="form-control mt-6">
+          <button (click)="addEmployee()" type="button" class="btn btn-primary">
+            Add Employee
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+</div>
