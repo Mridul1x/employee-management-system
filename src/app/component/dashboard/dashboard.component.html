@@ -1,34 +1,104 @@
-<div class="navbar bg-base-200 container mx-auto rounded-2xl">
-  <div class="flex-1">
-    <a class="btn btn-ghost text-xl">Employee Management</a>
+<div class="container mx-auto">
+  <nav class="navbar bg-base-200 rounded-2xl">
+    <div class="flex-1">
+      <a class="btn btn-ghost text-xl">Employee Management</a>
+    </div>
+    <div class="navbar-center flex-auto">
+      <button class="btn btn-outline btn-info " onclick="employee.showModal()">Add Employee</button>
+    </div>
+  </nav>
+  <div class="overflow-x-auto mt-4">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Employee ID</th>
+          <th>MongoDB Object ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Salary</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of empList; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ employee._id }}</td>
+          <td>{{ employee.name }}</td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.salary }}</td>
+          <td>
+            <button
+              type="button"
+              onclick="editEmployee.showModal()"
+              class="btn btn-outline btn-primary me-2"
+              (click)="editEmployee(employee)"
+            >
+              Edit
+            </button>
+            <button
+              type="button"
+              class="btn btn-outline btn-error"
+              (click)="deleteEmployee(employee._id!)"
+            >
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-  <div class="navbar-center flex-auto">
-    <!-- modal button -->
-    <button class="btn" onclick="employee.showModal()">Add Employee</button>
-  </div>
-  <!-- employee modal -->
+
+  <!-- Add Employee Modal -->
   <dialog id="employee" class="modal">
     <div class="modal-box">
-      <form method="dialog" [formGroup]="empDetail">
+      <h3 class="text-lg font-bold">Add Employee Details</h3>
+      <form [formGroup]="empDetail" (ngSubmit)="addEmployee()">
         <button
-          type="submit"
+          type="button"
           class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          onclick="employee.close()"
         >
           ✕
         </button>
-        <div class="form-control">
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['name'].invalid &&
+              (empDetail.controls['name'].dirty ||
+                empDetail.controls['name'].touched)
+          }"
+        >
           <label class="label">
             <span class="label-text">Name</span>
           </label>
           <input
-            type="name"
+            type="text"
             placeholder="Type Your Name"
             class="input input-bordered"
             formControlName="name"
-            id="name"
+            required
           />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['name'].invalid &&
+              (empDetail.controls['name'].dirty ||
+                empDetail.controls['name'].touched)
+            "
+          >
+            Name is required.
+          </div>
         </div>
-        <div class="form-control">
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['email'].invalid &&
+              (empDetail.controls['email'].dirty ||
+                empDetail.controls['email'].touched)
+          }"
+        >
           <label class="label">
             <span class="label-text">Email</span>
           </label>
@@ -37,24 +107,171 @@
             placeholder="Type Your Email"
             class="input input-bordered"
             formControlName="email"
-            id="email"
+            required
           />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['email'].invalid &&
+              (empDetail.controls['email'].dirty ||
+                empDetail.controls['email'].touched)
+            "
+          >
+            Valid email is required.
+          </div>
         </div>
-        <div class="form-control">
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['salary'].invalid &&
+              (empDetail.controls['salary'].dirty ||
+                empDetail.controls['salary'].touched)
+          }"
+        >
           <label class="label">
             <span class="label-text">Salary</span>
           </label>
           <input
-            type="salary"
+            type="number"
             placeholder="Type Your Salary"
             class="input input-bordered"
             formControlName="salary"
-            id="salary"
+            required
           />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['salary'].invalid &&
+              (empDetail.controls['salary'].dirty ||
+                empDetail.controls['salary'].touched)
+            "
+          >
+            Salary is required.
+          </div>
         </div>
         <div class="form-control mt-6">
-          <button (click)="addEmployee()" type="button" class="btn btn-primary">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="empDetail.invalid"
+          >
             Add Employee
+          </button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Edit Employee Modal -->
+  <dialog id="editEmployee" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Edit Employee Details</h3>
+      <form [formGroup]="empDetail" (ngSubmit)="updateEmployee()">
+        <button
+          type="button"
+          class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+          onclick="editEmployee.close()"
+        >
+          ✕
+        </button>
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['name'].invalid &&
+              (empDetail.controls['name'].dirty ||
+                empDetail.controls['name'].touched)
+          }"
+        >
+          <label class="label">
+            <span class="label-text">Name</span>
+          </label>
+          <input
+            type="text"
+            placeholder="Type Your Name"
+            class="input input-bordered"
+            formControlName="name"
+            required
+          />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['name'].invalid &&
+              (empDetail.controls['name'].dirty ||
+                empDetail.controls['name'].touched)
+            "
+          >
+            Name is required.
+          </div>
+        </div>
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['email'].invalid &&
+              (empDetail.controls['email'].dirty ||
+                empDetail.controls['email'].touched)
+          }"
+        >
+          <label class="label">
+            <span class="label-text">Email</span>
+          </label>
+          <input
+            type="email"
+            placeholder="Type Your Email"
+            class="input input-bordered"
+            formControlName="email"
+            required
+          />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['email'].invalid &&
+              (empDetail.controls['email'].dirty ||
+                empDetail.controls['email'].touched)
+            "
+          >
+            Valid email is required.
+          </div>
+        </div>
+        <div
+          class="form-control"
+          [ngClass]="{
+            'has-error':
+              empDetail.controls['salary'].invalid &&
+              (empDetail.controls['salary'].dirty ||
+                empDetail.controls['salary'].touched)
+          }"
+        >
+          <label class="label">
+            <span class="label-text">Salary</span>
+          </label>
+          <input
+            type="number"
+            placeholder="Type Your Salary"
+            class="input input-bordered"
+            formControlName="salary"
+            required
+          />
+          <div
+            class="text-error"
+            *ngIf="
+              empDetail.controls['salary'].invalid &&
+              (empDetail.controls['salary'].dirty ||
+                empDetail.controls['salary'].touched)
+            "
+          >
+            Salary is required.
+          </div>
+        </div>
+        <div class="form-control mt-6">
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="empDetail.invalid"
+          >
+            Update
           </button>
         </div>
       </form>
