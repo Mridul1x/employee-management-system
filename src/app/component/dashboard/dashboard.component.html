@@ -4,13 +4,22 @@
       <a class="btn btn-ghost text-xl">Employee Management</a>
     </div>
     <div class="navbar-center flex-auto">
-      <button class="btn btn-outline btn-info " onclick="employee.showModal()">Add Employee</button>
+      <input
+        type="text"
+        class="input input-bordered me-2"
+        placeholder="Search by name"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange($event)"
+      />
+      <button class="btn btn-outline btn-info" onclick="employee.showModal()">
+        Add Employee
+      </button>
     </div>
   </nav>
   <div class="overflow-x-auto mt-4">
     <table class="table">
       <thead>
-        <tr>
+        <tr class="text-lg">
           <th>Employee ID</th>
           <th>MongoDB Object ID</th>
           <th>Name</th>
@@ -20,7 +29,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let employee of empList; let i = index">
+        <tr *ngFor="let employee of empList; let i = index" class="text-base">
           <td>{{ i + 1 }}</td>
           <td>{{ employee._id }}</td>
           <td>{{ employee.name }}</td>

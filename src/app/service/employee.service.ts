@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Employee } from '../model/employee';
 import { Observable } from 'rxjs';
@@ -27,5 +27,10 @@ export class EmployeeService {
 
   deleteEmployee(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseURL}/${id}`);
+  }
+
+  searchEmployees(query: string): Observable<Employee[]> {
+    const params = new HttpParams().set('query', query);
+    return this.http.get<Employee[]>(`${this.baseURL}/search`, { params });
   }
 }

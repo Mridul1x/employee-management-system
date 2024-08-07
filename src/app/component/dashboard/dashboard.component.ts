@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Employee } from '../../model/employee';
 import { EmployeeService } from '../../service/employee.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,10 +13,12 @@ export class DashboardComponent implements OnInit {
   empDetail!: FormGroup;
   empObj: Employee = new Employee();
   empList: Employee[] = [];
+  searchTerm: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
-    private empService: EmployeeService
+    private empService: EmployeeService,
+    private toastr: ToastrService // Injecting ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -40,28 +43,36 @@ export class DashboardComponent implements OnInit {
 
     this.empService.addEmployee(this.empObj).subscribe(
       (res) => {
+        this.toastr.success('Employee Added successfully', 'Success');
         this.getAllEmployee();
         this.empDetail.reset();
       },
       (err) => {
+        this.toastr.error('Failed to add Employee');
         console.log(err);
       }
     );
   }
 
-  getAllEmployee() {
-    this.empService.getAllEmployee().subscribe(
-      (res) => {
-        this.empList = res;
-      },
-      (err) => {
-        console.log('error while fetching data.');
-      }
-    );
+  getAllEmployee(): void {
+    this.empService.getAllEmployee().subscribe((employees: Employee[]) => {
+      this.empList = employees;
+    });
+  }
+
+  onSearchChange(searchValue: string): void {
+    this.searchTerm = searchValue;
+    if (searchValue) {
+      this.empList = this.empList.filter((emp) =>
+        emp.name.toLowerCase().includes(searchValue.toLowerCase())
+      );
+    } else {
+      this.getAllEmployee();
+    }
   }
 
   editEmployee(emp: Employee) {
-    this.empDetail.controls['id'].setValue(emp._id); // Ensure you use the correct ID field
+    this.empDetail.controls['id'].setValue(emp._id);
     this.empDetail.controls['name'].setValue(emp.name);
     this.empDetail.controls['email'].setValue(emp.email);
     this.empDetail.controls['salary'].setValue(emp.salary);
@@ -75,11 +86,13 @@ export class DashboardComponent implements OnInit {
 
     this.empService.updateEmployee(this.empObj._id!, this.empObj).subscribe(
       (res) => {
+        this.toastr.success('Employee Updated successfully', 'Success');
         console.log(res);
         this.getAllEmployee();
-        this.empDetail.reset(); // Reset form after update
+        this.empDetail.reset();
       },
       (err) => {
+        this.toastr.error('Failed to update employee');
         console.log(err);
       }
     );
@@ -89,10 +102,11 @@ export class DashboardComponent implements OnInit {
     this.empService.deleteEmployee(id).subscribe(
       (res) => {
         console.log(res);
-        alert('Employee deleted successfully');
+        this.toastr.success('Employee Deleted successfully', 'Success');
         this.getAllEmployee();
       },
       (err) => {
+        this.toastr.error('Failed to delete employee', 'Delete');
         console.log(err);
       }
     );

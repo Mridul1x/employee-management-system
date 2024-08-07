@@ -1,23 +1,31 @@
+import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import {
-  BrowserModule,
-  provideClientHydration,
-} from '@angular/platform-browser';
-
-import { AppRoutingModule } from './app-routing.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideToastr, ToastrModule } from 'ngx-toastr';
 import { AppComponent } from './app.component';
 import { DashboardComponent } from './component/dashboard/dashboard.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
+
 @NgModule({
   declarations: [AppComponent, DashboardComponent],
   imports: [
     BrowserModule,
-    AppRoutingModule,
+    FormsModule,
+    RouterModule,
     ReactiveFormsModule,
     HttpClientModule,
+    BrowserAnimationsModule, // Required for ngx-toastr
+    ToastrModule.forRoot(), // ToastrModule added
   ],
-  providers: [provideClientHydration()],
+  providers: [
+    provideToastr({
+      timeOut: 3000,
+      positionClass: 'toast-bottom-right',
+      preventDuplicates: true,
+    }),
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
